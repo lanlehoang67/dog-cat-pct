@@ -26,8 +26,6 @@ class Perceptron():
     def initialize_with_zeros(self,dim):  
         w = np.zeros((dim, 1))
         b = 0
-        assert(w.shape == (dim, 1))
-        assert(isinstance(b, float) or isinstance(b, int))
         return w, b
     def propagate(self,w, b, X, Y):
         m = X.shape[1]
@@ -35,10 +33,7 @@ class Perceptron():
         cost = -(1/m) * np.sum(Y.T * np.log(A) + (1 - Y.T) * (np.log(1-A)) )                                 
         dw = (1/m) * np.dot(X,(A-Y.T))
         db = (1/m) * np.sum(A-Y.T)
-        assert(dw.shape == w.shape)
-        assert(db.dtype == float)
         cost = np.squeeze(cost)
-        assert(cost.shape == ())
         
         grads = {"dw": dw,
                 "db": db}
@@ -57,7 +52,7 @@ class Perceptron():
             if i % 100 == 0:
                 costs.append(cost)    
             if print_cost and i % 100 == 0:
-                print ("Cost after iteration %i: %f" %(i, cost))   
+                print("Cost after iteration %i: %f" %(i, cost))   
         params = {"w": w,
                 "b": b}
         
@@ -76,6 +71,7 @@ class Perceptron():
         return w,b
     def predict(self, X):  
         w,b = self.load()
+        print(w.shape)
         m = X.shape[1]
         Y_prediction = np.zeros((1,m))
         w = w.reshape(X.shape[0], 1) 
@@ -86,12 +82,11 @@ class Perceptron():
             if(A[i,0] > 0.5):
                 Y_prediction[0,i] = 1
             else:
-                Y_prediction[0,i] = 0      
-        assert(Y_prediction.shape == (1, m))
+                Y_prediction[0,i] = 0     
         
         return Y_prediction
 
-    def model(self, num_iterations = 2000, learning_rate = 0.5, print_cost = False):
+    def model(self, num_iterations = 2000, learning_rate = 0.005, print_cost = True):
         X_train, Y_train, X_test, Y_test = self.x_train,self.y_train,self.x_test,self.y_test
         w, b = self.initialize_with_zeros(X_train.shape[0])
         
@@ -122,8 +117,8 @@ test_set_x_flatten = test_set_x_orig.reshape(test_set_x_orig.shape[0], -1).T
 train_set_x = train_set_x_flatten/255.
 test_set_x = test_set_x_flatten/255.
 pct = Perceptron(train_set_x, train_set_y, test_set_x, test_set_y)
-pct.model()
-image = np.array(ndimage.imread('C:\\Users\\Hi-XV\\Desktop\\dogs-vs-cats-redux-kernels-edition\\test\\167.jpg', flatten=False))
+pct.model(print_cost=True)
+image = np.array(ndimage.imread('C:\\Users\\Hi-XV\\Desktop\\dogs-vs-cats-redux-kernels-edition\\test\\205.jpg', flatten=False))
 my_image = scipy.misc.imresize(image, size=(num_px,num_px)).reshape((1, num_px*num_px*3)).T
 print(pct.predict(my_image))
 
